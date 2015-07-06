@@ -1,0 +1,31 @@
+#!/usr/bin/expect
+
+set user [lindex $argv 0]
+set pwd [lindex $argv 1]
+
+spawn encfs --standard /home/$user/.Private /home/$user/Private
+expect "Le répertoire \"/home/$user/.Private/\" n'existe pas. Faut-il le créer ? (y/n) "
+send -- "y\r"
+expect -exact "Le répertoire \"/home/$user/Private\" n'existe pas. Faut-il le créer ? (y/n) "
+send -- "y\r"
+expect -exact "Création du nouveau volume encrypté.\r
+Configuration normale sélectionnée.\r
+\r
+Configuration terminée. Le système de fichier à créer a les propriétés suivantes :\r
+Cryptage du système de fichiers : \"ssl/aes\" version 3:0:2\r
+Encodage de fichier \"nameio/block\", version 3:0:1\r
+Taille de clé : 192 bits\r
+Taille de bloc : 1024 octets\r
+Chaque fichier contient un en-tête de 8 octets avec des données IV uniques.\r
+Noms de fichier encodés à l'aide du mode de chaînage IV.\r
+File holes passed through to ciphertext.\r
+\r
+Vous devez entrer un mot de passe pour votre système de fichiers.\r
+Vous devez vous en souvenir, car il n'existe aucun mécanisme de récupération.\r
+Toutefois, le mot de passe peut être changé plus tard à l'aide d'encfsctl.\r
+\r
+Nouveau mot de passe : "
+send -- "$pwd\r"
+expect "Vérifier le mot de passe : "
+send -- "$pwd\r"
+expect eof
